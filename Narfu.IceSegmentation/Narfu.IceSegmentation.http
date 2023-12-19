@@ -1,0 +1,6 @@
+@Narfu.IceSegmentation_HostAddress = http://localhost:5076
+
+GET {{Narfu.IceSegmentation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

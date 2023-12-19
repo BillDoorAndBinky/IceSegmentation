@@ -1,6 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Narfu.IceSegmentation", "Narfu.IceSegmentation\Narfu.IceSegmentation.csproj", "{06361CCC-8B37-494A-B8DD-9FDC37ED961D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C7016945-45DE-46C4-8CC8-D93FB6857CFB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9F994047-9751-4DBA-B473-AF02B926B34C}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Narfu.IceSegmentation.ModelLoader", "Narfu.IceSegmentation.ModelLoader\Narfu.IceSegmentation.ModelLoader.csproj", "{B2EC8290-4065-4535-A8BA-987359C8E12C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Narfu.IceSegmentation", "Narfu.IceSegmentation\Narfu.IceSegmentation.csproj", "{1DA77C99-A1ED-40B1-A9EC-FB9DD553C4DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +17,17 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{06361CCC-8B37-494A-B8DD-9FDC37ED961D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{06361CCC-8B37-494A-B8DD-9FDC37ED961D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{06361CCC-8B37-494A-B8DD-9FDC37ED961D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{06361CCC-8B37-494A-B8DD-9FDC37ED961D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2EC8290-4065-4535-A8BA-987359C8E12C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2EC8290-4065-4535-A8BA-987359C8E12C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2EC8290-4065-4535-A8BA-987359C8E12C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2EC8290-4065-4535-A8BA-987359C8E12C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DA77C99-A1ED-40B1-A9EC-FB9DD553C4DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DA77C99-A1ED-40B1-A9EC-FB9DD553C4DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DA77C99-A1ED-40B1-A9EC-FB9DD553C4DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DA77C99-A1ED-40B1-A9EC-FB9DD553C4DA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B2EC8290-4065-4535-A8BA-987359C8E12C} = {C7016945-45DE-46C4-8CC8-D93FB6857CFB}
+		{1DA77C99-A1ED-40B1-A9EC-FB9DD553C4DA} = {C7016945-45DE-46C4-8CC8-D93FB6857CFB}
 	EndGlobalSection
 EndGlobal

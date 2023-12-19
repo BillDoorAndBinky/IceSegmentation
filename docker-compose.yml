@@ -1,0 +1,8 @@
+﻿services:
+  narfu.icesegmentation:
+    image: narfu.icesegmentation
+    build:
+      context: .
+      dockerfile: Narfu.IceSegmentation/Dockerfile
+    ports:
+      - 8080:8080
