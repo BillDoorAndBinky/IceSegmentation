@@ -1,7 +1,7 @@
-using Narfu.IceSegmentation.Contracts.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
+using Narfu.IceSegmentation.Contracts.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -17,6 +17,11 @@ public class OnnxModelSegmentator : IImageSegmentator, IDisposable
         var section = configuration.GetSection("OnnxOptions");
         var modelPath = section.GetSection("ModelPath").Value!;
         Session = new InferenceSession(modelPath);
+    }
+
+    public void Dispose()
+    {
+        Session.Dispose();
     }
 
     public Image<L8> SegmentImage(Image<Rgb24> inputImage)
@@ -51,17 +56,13 @@ public class OnnxModelSegmentator : IImageSegmentator, IDisposable
         var imageData = new float[batchSize * channels * height * width];
 
         for (var b = 0; b < batchSize; b++)
+        for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
         {
-            for (var y = 0; y < height; y++)
-            {
-                for (var x = 0; x < width; x++)
-                {
-                    var pixel = image[x, y];
-                    imageData[height * y * channels + x * channels + 0] = pixel.R / 255.0f;
-                    imageData[height * y * channels + x * channels + 1] = pixel.G / 255.0f;
-                    imageData[height * y * channels + x * channels + 2] = pixel.B / 255.0f;
-                }
-            }
+            var pixel = image[x, y];
+            imageData[height * y * channels + x * channels + 0] = pixel.R / 255.0f;
+            imageData[height * y * channels + x * channels + 1] = pixel.G / 255.0f;
+            imageData[height * y * channels + x * channels + 2] = pixel.B / 255.0f;
         }
 
         var tensor = new DenseTensor<float>(imageData, new[] { batchSize, height, width, channels });
@@ -75,29 +76,22 @@ public class OnnxModelSegmentator : IImageSegmentator, IDisposable
         var image = new Image<L8>(256, 256);
 
         for (var y = 0; y < 256; y++)
+        for (var x = 0; x < 256; x++)
         {
-            for (var x = 0; x < 256; x++)
+            var classProbabilities = new float[8];
+            for (var c = 0; c < 8; c++)
             {
-                var classProbabilities = new float[8];
-                for (var c = 0; c < 8; c++)
-                {
-                    var index = (y * 256 + x) * 8 + c;
-                    classProbabilities[c] = imageData[index];
-                }
-
-                var maxProbabilityIndex = Array.IndexOf(classProbabilities, classProbabilities.Max());
-
-                var intensity = (byte)(maxProbabilityIndex / 7.0 * 255);
-
-                image[x, y] = new L8(intensity);
+                var index = (y * 256 + x) * 8 + c;
+                classProbabilities[c] = imageData[index];
             }
+
+            var maxProbabilityIndex = Array.IndexOf(classProbabilities, classProbabilities.Max());
+
+            var intensity = (byte)(maxProbabilityIndex / 7.0 * 255);
+
+            image[x, y] = new L8(intensity);
         }
 
         return image;
-    }
-
-    public void Dispose()
-    {
-        Session.Dispose();
     }
 }

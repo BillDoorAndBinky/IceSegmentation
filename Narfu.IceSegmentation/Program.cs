@@ -43,29 +43,33 @@ app.MapGet("/weatherforecast", () =>
     .WithName("GetWeatherForecast")
     .WithOpenApi();
 
-app.MapPost("/image-segment", ([FromServices] IImageSegmentator imageSegmentator, [FromForm] IFormFile file) =>
-    {
-        if (file.Length == 0)
-        {
-            return Results.BadRequest("No file received");
-        }
 
-        using var stream = file.OpenReadStream();
+app.MapPost("/image-segment", (IImageSegmentator imageSegmentator, [FromForm] FileToUpload file) =>
+    {
+        if (file.File.Length == 0) return Results.BadRequest("No file received");
+
+        using var stream = file.File.OpenReadStream();
         using var image = Image.Load<Rgb24>(stream);
 
-        using var resultStream = new MemoryStream();
-        image.Save(resultStream, new JpegEncoder());
-
-        resultStream.Seek(0, SeekOrigin.Begin);
-
+        var segmentImage = imageSegmentator.SegmentImage(image);
+        var resultStream = new MemoryStream();
+        segmentImage.Save(resultStream, new JpegEncoder());
+        resultStream.Position = 0;
         return Results.File(resultStream, "image/jpeg");
     })
     .WithName("SegmentImage")
+    .DisableAntiforgery()
     .WithOpenApi();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+
+public class FileToUpload
+{
+    public IFormFile File { get; set; }
+}
+
+internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
