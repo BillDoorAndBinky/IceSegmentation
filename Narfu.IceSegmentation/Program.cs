@@ -1,9 +1,16 @@
+using Microsoft.AspNetCore.Mvc;
+using Narfu.IceSegmentation.Contracts.Interfaces;
+using Narfu.IceSegmentation.ModelLoader.Services;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.PixelFormats;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<IImageSegmentator, OnnxModelSegmentator>();
 
 var app = builder.Build();
 
@@ -34,6 +41,26 @@ app.MapGet("/weatherforecast", () =>
         return forecast;
     })
     .WithName("GetWeatherForecast")
+    .WithOpenApi();
+
+app.MapPost("/image-segment", ([FromServices] IImageSegmentator imageSegmentator, [FromForm] IFormFile file) =>
+    {
+        if (file.Length == 0)
+        {
+            return Results.BadRequest("No file received");
+        }
+
+        using var stream = file.OpenReadStream();
+        using var image = Image.Load<Rgb24>(stream);
+
+        using var resultStream = new MemoryStream();
+        image.Save(resultStream, new JpegEncoder());
+
+        resultStream.Seek(0, SeekOrigin.Begin);
+
+        return Results.File(resultStream, "image/jpeg");
+    })
+    .WithName("SegmentImage")
     .WithOpenApi();
 
 app.Run();
